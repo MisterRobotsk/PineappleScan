@@ -1,0 +1,1 @@
+All port is free from 1 before 1023
