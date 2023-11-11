@@ -1,1 +1,2 @@
-Port open: 127.0.0.1:41262
+Port open: localhost:47086
+Port open: localhost:59512
