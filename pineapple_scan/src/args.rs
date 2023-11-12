@@ -5,6 +5,8 @@ pub mod addfile{
 	use std::io::Write;
 	use std::time::Instant;
 	use chrono::{Datelike, Timelike, Local};
+    	use std::process::Command;
+    	use dns_lookup::lookup_host;
 	
 	pub fn print_time(){
 
@@ -29,7 +31,8 @@ pub mod addfile{
 
 	    print!("Starting PineappleScan ({}): ", var);
 	    print_time();
-
+            println!("please wait until the program finishes scanning the ports....");
+            
 	    let start = Instant::now();
 
 	    for port in 1..1024{
@@ -51,7 +54,8 @@ pub mod addfile{
     
 	    print!("Starting PineappleScan ({}): ", var);
 	    print_time();
-
+	    println!("please wait until the program finishes scanning the ports....");
+	    
 	    let start = Instant::now();
 	    let mut count_closed_ports = 0;
 
@@ -115,7 +119,8 @@ pub mod addfile{
 	    
 	    print!("Starting scan ports ({}): ", var);
 	    print_time();
-
+	    println!("please wait until the program finishes scanning the ports....");
+	    
 	    let start = Instant::now();
 
 	    for port in 1..65536{
@@ -142,6 +147,7 @@ pub mod addfile{
 	    
 	    print!("Starting scan ports ({}): ", var);
 	    print_time();
+	    println!("please wait until the program finishes scanning the ports....");
 	    
 	    let start = Instant::now();
 
@@ -155,7 +161,7 @@ pub mod addfile{
 		    if let  Ok(_) = socket.connect(&ip){
 		        continue;
 		    } else {
-		        write!(output, "Port closed: {}\n", &ip).unwrap();
+		        write!(output, "Port {} is closed.\n", &ip).unwrap();
 		        count_closed_ports += 1;
 		    }
 		}
@@ -169,4 +175,121 @@ pub mod addfile{
 	    print_time();
 	    println!("PineappleScan done: 1 IP Address (1 host up) scanned in {:?}. Record data in dataUdp.txt", duration);
 	}
+
+    pub fn scan_ping(var: String){
+        
+        print!("Starting scan ping port ({}): ", var);
+        print_time();
+        println!("please wait until the program finishes scanning the ports....");
+
+        let start = Instant::now();
+
+        for port in 1..1024{
+            let output = Command::new("ping")
+                                .arg("-c")
+                                .arg("1")
+                                .arg("-w")
+                                .arg("1")
+                                .arg(&var)
+                                .output()
+                                .expect("Failed to execute command");
+            if output.status.success(){
+                continue;
+            } else {
+                println!("Port {} is closed.", port);
+            }
+        }
+        
+        let duration = start.elapsed();
+        print!("\nCompleted PineappleScan: ");
+        print_time();
+        println!("PineappleScan done: 1 IP Address (1 host up) scanned in {:?}", duration);
+    }
+
+    pub fn scan_record_ping(var: String){
+        
+        let path = "dataPing.txt";
+        let mut file_output = File::create(path).unwrap();
+    
+        print!("Starting scan ping port ({}): ", var);
+        print_time();
+        println!("please wait until the program finishes scanning the ports....");
+        
+        let start = Instant::now();
+
+        for port in 1..1024{
+            let output = Command::new("ping")
+                                .arg("-c")
+                                .arg("1")
+                                .arg("-w")
+                                .arg("1")
+                                .arg(&var)
+                                .output()
+                                .expect("Failed to execute command");
+
+            if output.status.success(){
+                continue;
+            } else {
+                write!(file_output, "Port {} is closed.\n", &port).unwrap();
+            }
+        }
+
+        let duration = start.elapsed();
+        print!("\nCompleted PineappleScan: ");
+        print_time();
+        println!("PineappleScan done: 1 IP Address (1 host up) scanned in {:?}", duration);
+    }
+
+    pub fn scan_dns(var: String){
+        
+        print!("Starting search dns ({}): ", var);
+        print_time();
+        println!("please wait until the program finishes scanning the ports....");
+        
+        let start = Instant::now();
+        
+         match lookup_host(&var){
+            Ok(ip_addresses) => {
+                for ip in ip_addresses{
+                    println!("Name:   {}\nAddress: {}", var, ip);
+                }
+            }, 
+            Err(err) => {
+                println!("Failed finish work\nName:   {}\nAddress: {}", var, err)
+            }
+         }
+         
+         let duration = start.elapsed();
+         print!("\nCompleted PineappleScan: ");
+         print_time();
+         println!("PineappleScan done: 1 IP Address (1 host up) search dns in {:?}", duration);
+    }
+
+    pub fn scan_record_dns(var: String){
+
+        let path = String::from("dataDns.txt");
+        let mut output = File::create(path).unwrap();
+
+        print!("Starting search dns ({}): ", var);
+        print_time();
+        println!("please wait until the program finishes scanning the ports....");
+        
+        let start = Instant::now();
+
+        match lookup_host(&var){
+            Ok(ip_addresses) => {
+                for ip in ip_addresses{
+                    write!(output, "Name:   {}\nAddress: {}\n", var, ip).unwrap();
+                }
+            },
+            Err(err) => {
+                println!("Failed finish work\nName:   {}\nAddress: {}", var, err);
+            }
+        }
+
+        let duration = start.elapsed();
+        print!("\nCompleted PineappleScan: ");
+        print_time();
+        println!("PineappleScan done: 1 IP Address (1 host up) search dns in {:?}", duration);
+    }
 }
