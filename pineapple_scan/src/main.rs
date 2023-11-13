@@ -5,7 +5,7 @@ use std::env;
 
 fn main(){
     let help = "\
-    Scanner ports:
+    PineappleScan:
 
             About program: Scanner port 
             About author: MisterRobotsk
@@ -13,16 +13,14 @@ fn main(){
             Command:
                 -h or --help                print all command program
                 -v or --version             print version command
-                -sT or --scanTcp            use method tcp for print information about open ports
-                -sU or --scanUdp            use method udp for print information about open ports
-                -sP or --scanPing           ping scan ports
-                -sRP or --scanRecordPing    ping scan ports and record in file
-                -sRT or --scanRecordTcp     record information in file about open ports
-                -sRU or --scanRecordUdp     record information in file about free ports
-                -sP or --scanPing           show ping server
-                -sRP or --scanRecordPing    record ping server in file
-                -sD or --scanDns            show dns server
-                -sRD or --scanRecordDns     record about dns server in file
+                -sT or --scanTcp            show open ports using TCP scan
+                -sU or --scanUdp            
+                -sP or --scanPing           shows open ports using ping scan
+                -sRP or --scanRecordPing    records open ports using ping scan in file
+                -sRT or --scanRecordTcp     records open ports using TCP scan in file
+                -sRU or --scanRecordUdp     records open ports using UDP scan in file
+                -sD or --scanDns            shows the DNS of the host
+                -sRD or --scanRecordDns     records the DNS of the host in file
             
             Example:
                 -sT 127.0.0.1
@@ -41,7 +39,7 @@ fn main(){
 
         match command.as_str(){
             "-h" | "--help" => println!("{}", help),
-            "-v" | "--version" => println!("Version: 0.1"),
+            "-v" | "--version" => println!("Version: 1.0"),
             "-sT" | "--scanTcp" => scan_tcp(args[2].to_string()),
             "-sU" | "--scanUdp" => scan_udp(args[2].to_string()),
             "-sRT" | "--scanRecordTcp" => scan_record_tcp(args[2].to_string()),
@@ -53,7 +51,7 @@ fn main(){
             _ => println!("please use command -h or --help"),
         }
     } else {
-        eprintln!("Please try again input, you ");
+        eprintln!("Please enter -h or --help to get help.");
     }
 }
 
