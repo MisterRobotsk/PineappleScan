@@ -58,6 +58,8 @@ pub mod addfile{
 	    println!("please wait until the program finishes scanning the ports....");
 	    let start = Instant::now();
 
+        let mut count_closed_ports = 0;
+
         for port in 1..1024{
             let ip: IpAddr = host.parse().expect("Incorrect ip address");
 
@@ -66,7 +68,13 @@ pub mod addfile{
                     Ok(_) => println!("Port {}:{} is open", &ip, &port),
                     Err(_) => println!("Port {}:{} is closed", &ip, &port),
                 }
+            } else {
+                count_closed_ports += 1;
             }
+        }
+        
+        if count_closed_ports == 1023{
+            println!("All ports is free from 1 before 1023");
         }
 
 	    let duration = start.elapsed();
@@ -121,13 +129,15 @@ pub mod addfile{
 		if let Ok(socket) = UdpSocket::bind(&(ip, port)){
 			match socket.connect(&(ip, port)){
 				    Ok(_) => write!(output, "Port {}:{} is open\n", &ip, &port).expect("I don't write data to file, Sorry :("),
-				    Err(_) => count_closed_ports += 1,
+				    Err(_) => write!(output, "Port {}:{} is closed\n", &ip, &port).expect("I don't write data to file, Sorry :("),
 			    }
-		    }
+		    } else {
+                count_closed_ports += 1;
+            }
 	    }
 	    
-	    if count_closed_ports == 0{
-		    write!(output, "All port is free from 1 before 1023").expect("I don't write data to file, Sorry :(");
+	    if count_closed_ports == 1023{
+		    write!(output, "All ports is free from 1 before 1023").expect("I don't write data to file, Sorry :(");
 	    }
 
 	    let duration = start.elapsed();

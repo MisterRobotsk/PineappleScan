@@ -53,7 +53,7 @@ fn main(){
 
         match command.as_str(){
             "-h" | "--help" => println!("{}", help),
-            "-v" | "--version" => println!("Version: 1.1"),
+            "-v" | "--version" => println!("Version: 1.2"),
             
 	    "-sT" | "--scanTcp" => scan_tcp(args[2].to_string()),
             "-sU" | "--scanUdp" => scan_udp(args[2].to_string()),
